@@ -1,6 +1,6 @@
 # DNA-Quote-Bot
 
-yes
+A discord bot that spits out a new quote each day.
 
 ## Installation
 
