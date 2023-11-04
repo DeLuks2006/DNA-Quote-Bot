@@ -1,9 +1,9 @@
 import discord
-from discord import app_commands
 from discord.ext import commands
-from discord.app_commands import tree
 from dotenv import load_dotenv
 import os
+
+from quotes import QuoteDB
 
 # [i] - info
 # [-] - shits going down (error)
@@ -12,6 +12,9 @@ import os
 TEST_GUILD = discord.Object(id=1159225022888554506)
 COG_FOLDER = "cogs"
 load_dotenv()
+
+db = QuoteDB()
+print(f"[i] Quotes: {db.quotes}")
 
 
 class MyClient(commands.Bot):
