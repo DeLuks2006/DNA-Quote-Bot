@@ -21,10 +21,10 @@ class MyClient(commands.Bot):
     # If this class extended discord.Client
     # it would be more of a pain to get everything set up correctly
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-    async def setup_hook(self):
+    async def setup_hook(self) -> None:
         # Nobody wants to specify the files manually
         found_cogs = []
         for file in os.listdir(COG_FOLDER):
@@ -40,8 +40,9 @@ class MyClient(commands.Bot):
         self.tree.copy_global_to(guild=TEST_GUILD)
         await self.tree.sync(guild=TEST_GUILD)
 
-    async def on_ready(self):
+    async def on_ready(self) -> None:
         print(f'[i] Logged on as {self.user}!')
+
 
 intents = discord.Intents.default()
 intents.messages = True

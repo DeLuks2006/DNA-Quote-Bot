@@ -8,7 +8,7 @@ class Test(commands.Cog):
         self.bot = bot
 
     @app_commands.command()
-    async def ping(self, interaction: discord.Interaction):
+    async def ping(self, interaction: discord.Interaction) -> None:
         """
         Says pong!
         """
@@ -16,7 +16,7 @@ class Test(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
     @app_commands.command()
-    async def embed(self, interaction: discord.Interaction):
+    async def embed(self, interaction: discord.Interaction) -> None:
         """
         Sends an example embed, thanks Deluks
         """
@@ -29,5 +29,5 @@ class Test(commands.Cog):
         await interaction.response.send_message(embed=embed)
 
 
-async def setup(bot: commands.Bot):
+async def setup(bot: commands.Bot) -> None:
     await bot.add_cog(Test(bot))
