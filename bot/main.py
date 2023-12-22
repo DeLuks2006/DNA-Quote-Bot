@@ -10,7 +10,7 @@ from quotes import QuoteDB
 # [+] - everythin alr
 
 TEST_GUILD = discord.Object(id=1159225022888554506)
-COG_FOLDER = "cogs"
+COG_FOLDER = "bot/cogs"
 load_dotenv()
 
 db = QuoteDB()
