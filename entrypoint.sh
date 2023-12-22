@@ -8,6 +8,7 @@ if [ "$ENV" == "DEV" ]; then
     while read -r path event file; do
         echo "Detected file changes: $path/$file. Restarting...";
         pkill python;
+        sleep 2;
         python $ENTRY &
     done
 else
