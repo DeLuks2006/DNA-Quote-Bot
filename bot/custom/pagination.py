@@ -15,8 +15,12 @@ class PaginationView(ui.View):
         select_callback,
         limit: int = 5,
         *args,
-        **kwargs
+        **kwargs,
     ):
+        if limit > 25:
+            raise ValueError(
+                "Select Menu Options limit too high. Limit can't be higher than 25. Reference: https://discord.com/developers/docs/interactions/message-components#select-menu-object-select-menu-structure"
+            )
         self.options = options
         self.pages = pages
         self.placeholder = placeholder
@@ -88,7 +92,9 @@ class PaginationView(ui.View):
         await self.update_message()
 
     @ui.button(label="Page", disabled=True)
-    async def page_button(self, interaction: Interaction, button: ui.Button) -> None:
+    async def page_button(
+        self, interaction: Interaction, button: ui.Button
+    ) -> None:
         pass
 
     @ui.button(label="▶️")

@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from .models import Quote
+from bot.database.models import Quote
 
 
 def create_session_maker(db_uri: str) -> sessionmaker:
