@@ -1,6 +1,6 @@
 #!/bin/sh
 
-ENTRY=bot/main.py
+ENTRY=main.py
 
 if [ "$ENV" == "DEV" ]; then
     python $ENTRY &

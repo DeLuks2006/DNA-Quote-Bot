@@ -7,4 +7,5 @@ services:
     container_name: dna-quote-bot
     build: .
     volumes:
+      - ./data:/app/data
       - .:/app
