@@ -1,4 +1,13 @@
-from sqlalchemy import Column, Integer, Text, VARCHAR, DateTime, Boolean, func, false
+from sqlalchemy import (
+    Column,
+    Integer,
+    Text,
+    VARCHAR,
+    DateTime,
+    Boolean,
+    func,
+    false,
+)
 
 from .base import Base
 

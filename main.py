@@ -11,5 +11,7 @@ if __name__ == "__main__":
     intents = discord.Intents.default()
     intents.messages = True
     db = Database(sessionmaker=create_session_maker(DB_URI))
-    bot = MyClient(intents=intents, command_prefix="/", db=db)  # Prefix doesn't matter here
+    bot = MyClient(
+        intents=intents, command_prefix="/", db=db
+    )  # Prefix doesn't matter here
     bot.run(TOKEN)

@@ -1,8 +1,6 @@
-from typing import TypedDict
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from .models import Quote
-from math import ceil
 
 
 def create_session_maker(db_uri: str) -> sessionmaker:
@@ -12,12 +10,6 @@ def create_session_maker(db_uri: str) -> sessionmaker:
     # check_same_thread needed for sqlite
     engine = create_engine(db_uri, connect_args={"check_same_thread": False})
     return sessionmaker(engine, autocommit=False, autoflush=False)
-
-
-class QuotesResult(TypedDict):
-    total: int
-    pages: int
-    quotes: list[Quote] | None
 
 
 class Database:
@@ -40,10 +32,8 @@ class Database:
         self,
         session: Session,
         user_id: str,
-        page: int = 0,
-        limit: int = 25,
         only_unapproved: bool = True,
-    ) ->  QuotesResult:
+    ) -> list[Quote] | None:
         if only_unapproved:
             query = session.query(Quote).filter(
                 Quote.submitted_by == user_id and Quote.approved == False
@@ -51,15 +41,7 @@ class Database:
         else:
             query = session.query(Quote).filter(Quote.submitted_by == user_id)
 
-        total = query.count()
-        pages = ceil((total / limit) - 1)
-        query = query.limit(limit).offset(page * limit)
         quotes = list(query)
         if len(quotes) == 0:
             quotes = None
-        
-        return {
-            "total": total,
-            "pages": pages,
-            "quotes": quotes,
-        }
+        return quotes
