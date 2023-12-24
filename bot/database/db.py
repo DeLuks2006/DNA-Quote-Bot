@@ -28,6 +28,9 @@ class Database:
     def get_quote_by_text(self, session: Session, text: str) -> Quote | None:
         return session.query(Quote).filter(Quote.text == text).first()
 
+    def get_quote(self, session: Session, quote_id: int) -> Quote | None:
+        return session.get(Quote, quote_id)
+
     def get_quotes(
         self,
         session: Session,
@@ -45,3 +48,9 @@ class Database:
         if len(quotes) == 0:
             quotes = None
         return quotes
+
+    def remove_quote(self, session: Session, quote_id: int) -> None:
+        quote = self.get_quote(session, quote_id)
+        if quote is not None:
+            session.delete(quote)
+            session.commit()

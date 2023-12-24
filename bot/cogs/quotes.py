@@ -1,7 +1,9 @@
 from bot.client import MyClient
+from bot.custom.views.pagination import PaginationView
+from bot.custom.views.quote_detail import QuoteDetailUserView
 from discord import app_commands, Interaction, Embed, SelectOption
 from discord.ext import commands
-from discord.ui import View, Select
+from math import ceil
 
 
 class QuotesCog(commands.Cog):
@@ -60,41 +62,54 @@ class QuotesCog(commands.Cog):
         # Query DB for submitted quotes by user
         only_unapproved = type == "unapproved"
         with self.db.sessionmaker() as session:
-            result = self.db.get_quotes(
+            quotes = self.db.get_quotes(
                 session, interaction.user.id, only_unapproved=only_unapproved
             )
-        if result["quotes"] is None:
+
+        if quotes is None:
             return await interaction.followup.send("No submitted quotes found.")
 
         # Build response
-        view = View()
-        title = "Submitted quotes:"
-        selects = []
-        for quote in result["quotes"]:
+        options = []
+        for quote in quotes:
             author = quote.author
             text = quote.text
             if len(text) > 100:
                 text = text[: 100 - 3] + "..."
             if len(author) > 100:
                 author = author[: 100 - 3] + "..."
-            selects.append(SelectOption(label=text, description=author))
-        select = Select(options=selects)
+            options.append(SelectOption(label=text, description=author, value=quote.id))
+
+        limit = 10
+        pages = ceil((len(quotes) / limit) - 1)
+        placeholder = "Submitted quotes:"
 
         async def select_callback(interaction: Interaction):
-            raise NotImplementedError
+            await interaction.response.defer()
 
-        select.callback = select_callback
+            quote_id = interaction.data["values"][0]
+            with self.db.sessionmaker() as session:
+                quote = self.db.get_quote(session, quote_id)
+            title = "Quote detail"
+            if not quote:
+                description = "Quote not found."
+                embed = Embed(title=title, description=description)
+                await interaction.followup.send(ephemeral=True, embed=embed)
+            else:
+                view = QuoteDetailUserView(quote, self.db)
+                await view.send(interaction.followup)
 
-        # TODO: Implement pagination
-
-        view.add_item(select)
-        await interaction.followup.send(title, view=view)
+        pagination_view = PaginationView(
+            options, pages, placeholder, select_callback, limit
+        )
+        return await pagination_view.send(interaction.followup)
 
     @app_commands.command()
     async def submissions(self, interaction: Interaction) -> None:
         """
         See list of submitted quotes by all users.
         """
+
         # Query DB for quotes awaiting approval
         raise NotImplementedError
 
