@@ -1,7 +1,7 @@
 import discord
 import logging
 from discord.ext import commands
-from .database import Database
+from bot.database import Database
 
 
 class MyClient(commands.Bot):

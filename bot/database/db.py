@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from bot.database.models import Quote
@@ -17,7 +18,7 @@ class Database:
         self.sessionmaker = sessionmaker
 
     def add_quote(
-        self, session: Session, author: str, text: str, submitter_id: str
+        self, session: Session, author: str, text: str, submitter_id: int
     ) -> Quote:
         quote = Quote(text=text, author=author, submitted_by=submitter_id)
         session.add(quote)
@@ -34,15 +35,14 @@ class Database:
     def get_quotes(
         self,
         session: Session,
-        user_id: str,
+        user_id: str = None,
         only_unapproved: bool = True,
     ) -> list[Quote] | None:
+        query = session.query(Quote)
         if only_unapproved:
-            query = session.query(Quote).filter(
-                Quote.submitted_by == user_id and Quote.approved == False
-            )
-        else:
-            query = session.query(Quote).filter(Quote.submitted_by == user_id)
+            query = query.filter(Quote.approved == False)
+        if user_id:
+            query = query.filter(Quote.submitted_by == user_id)
 
         quotes = list(query)
         if len(quotes) == 0:
@@ -53,4 +53,13 @@ class Database:
         quote = self.get_quote(session, quote_id)
         if quote is not None:
             session.delete(quote)
+            session.commit()
+
+    def approve_quote(self, session: Session, quote_id: int, user_id: int) -> None:
+        quote = self.get_quote(session, quote_id)
+        now = datetime.utcnow()
+        if quote:
+            quote.approved = True
+            quote.approved_by = user_id
+            quote.approved_at = now
             session.commit()
